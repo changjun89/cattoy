@@ -1,5 +1,8 @@
 package com.changjun.cattoy.application;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class GreetingService {
     private static final String DEFAULTS_MESSAGE = "Hello World";
     private static final String PREFIX_MESSAGE = "Hello ";
@@ -7,5 +10,4 @@ public class GreetingService {
     public String getMessage(String name) {
         return name == null ? DEFAULTS_MESSAGE : PREFIX_MESSAGE + name;
     }
-
 }
