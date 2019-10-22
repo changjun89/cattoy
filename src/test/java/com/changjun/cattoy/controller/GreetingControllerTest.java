@@ -30,11 +30,11 @@ public class GreetingControllerTest {
 
     @Test
     public void helloWithoutName() throws Exception {
-        given(greetingService.getMessage(null)).willReturn("Hello World");
+        given(greetingService.getMessage(null)).willReturn("Hello");
         mockMvc.perform(get("/"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Hello World")))
+                .andExpect(content().string(containsString("Hello")))
                 .andExpect(content().string(containsString("changjun")));
 
         verify(greetingService).getMessage(null);

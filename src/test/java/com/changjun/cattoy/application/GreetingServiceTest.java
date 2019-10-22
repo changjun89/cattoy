@@ -16,7 +16,7 @@ public class GreetingServiceTest {
 
     @Test
     public void getMessageWithNullName() {
-        assertThat(greetingService.getMessage(null)).isEqualTo("Hello World");
+        assertThat(greetingService.getMessage(null)).isEqualTo("Hello");
     }
 
     @Test
