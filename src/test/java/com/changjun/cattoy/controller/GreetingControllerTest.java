@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -29,23 +30,27 @@ public class GreetingControllerTest {
 
     @Test
     public void helloWithoutName() throws Exception {
-        given(greetingService.getMessage(null)).willReturn("Hello world");
+        given(greetingService.getMessage(null)).willReturn("Hello World");
         mockMvc.perform(get("/"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Hello World")))
                 .andExpect(content().string(containsString("changjun")));
+
+        verify(greetingService).getMessage(null);
     }
 
     @Test
     public void helloWithName() throws Exception {
-        given(greetingService.getMessage("jun")).willReturn("Hello jun");
+        String name = "jun";
+        given(greetingService.getMessage(name)).willReturn("Hello jun");
         mockMvc.perform(get("/")
-                .param("name", "jun")
+                .param("name", name)
         )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Hello jun")))
                 .andExpect(content().string(containsString("changjun")));
+        verify(greetingService).getMessage(name);
     }
 }
