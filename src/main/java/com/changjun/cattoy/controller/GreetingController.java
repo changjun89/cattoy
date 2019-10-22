@@ -1,7 +1,7 @@
 package com.changjun.cattoy.controller;
 
 import com.changjun.cattoy.application.GreetingService;
-import com.changjun.cattoy.dto.Greeting;
+import com.changjun.cattoy.dto.GreetingDto;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,8 +16,8 @@ public class GreetingController {
     }
 
     @GetMapping("/")
-    public Greeting greeting(@RequestParam(required = false) String name) {
-        Greeting greeting = new Greeting();
+    public GreetingDto greeting(@RequestParam(required = false) String name) {
+        GreetingDto greeting = new GreetingDto();
         greeting.setName("changjun");
         greeting.setMessage(greetingService.getMessage(name));
         return greeting;
