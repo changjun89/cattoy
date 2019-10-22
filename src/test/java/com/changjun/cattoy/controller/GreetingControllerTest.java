@@ -22,11 +22,22 @@ public class GreetingControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    public void hello() throws Exception {
+    public void helloWithoutName() throws Exception {
         mockMvc.perform(get("/"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Hello World")))
+                .andExpect(content().string(containsString("Hello world")))
+                .andExpect(content().string(containsString("changjun")));
+    }
+
+    @Test
+    public void helloWithName() throws Exception {
+        mockMvc.perform(get("/")
+                .param("name", "jun")
+        )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Hello jun")))
                 .andExpect(content().string(containsString("changjun")));
     }
 }
