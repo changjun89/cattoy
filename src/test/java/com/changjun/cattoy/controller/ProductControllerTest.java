@@ -17,8 +17,8 @@ import static org.hamcrest.core.StringContains.containsString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(ProductController.class)
@@ -33,15 +33,18 @@ public class ProductControllerTest {
     @Test
     public void list() throws Exception {
         List<Product> products = new ArrayList<>();
+        String name = "쥐돌이";
         Product product = Product.builder()
-                .name("쥐돌이")
+                .name(name)
                 .build();
         products.add(product);
 
         given(productService.getProducts()).willReturn(products);
         mockMvc.perform(get("/products"))
+                .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("쥐돌이")));
+                .andExpect(jsonPath("$[0].name").value(name))
+                .andExpect(content().string(containsString(name)));
 
         verify(productService).getProducts();
     }
