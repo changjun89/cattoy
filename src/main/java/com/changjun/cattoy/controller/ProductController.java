@@ -3,14 +3,24 @@ package com.changjun.cattoy.controller;
 import com.changjun.cattoy.application.ProductService;
 import com.changjun.cattoy.domain.Product;
 import com.changjun.cattoy.dto.ProductDto;
+import com.changjun.cattoy.resources.ProductResource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.Resources;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
+@RequestMapping(produces = MediaTypes.HAL_JSON_UTF8_VALUE)
 public class ProductController {
 
     private final ProductService productService;
@@ -20,15 +30,24 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public List<ProductDto> list() {
+    public ResponseEntity list() {
         List<Product> products = productService.getProducts();
-
-        return products.stream()
+        List<ProductResource> collect = products.stream()
                 .map(product -> {
                     ProductDto productDto = new ProductDto();
                     productDto.setName(product.getName());
-                    return productDto;
+                    productDto.setId(product.getId());
+                    return convertToProductResource(productDto);
                 })
                 .collect(toList());
+        Link selfRel = linkTo(methodOn(ProductController.class).list()).withSelfRel();
+        return ResponseEntity.ok().body(new Resources<>(collect, selfRel));
+    }
+
+    private ProductResource convertToProductResource(ProductDto dto) {
+        ProductResource productResource = new ProductResource(dto);
+        productResource.addUpdateEvents(this.getClass(), dto);
+        productResource.addQueryEvents(this.getClass(), dto);
+        return productResource;
     }
 }
