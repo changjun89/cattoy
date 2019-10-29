@@ -4,7 +4,7 @@ import com.changjun.cattoy.application.ProductService;
 import com.changjun.cattoy.domain.Product;
 import com.changjun.cattoy.dto.ProductDto;
 import com.changjun.cattoy.resources.ProductResource;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.github.dozermapper.core.Mapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.Resources;
@@ -23,9 +23,13 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping(produces = MediaTypes.HAL_JSON_UTF8_VALUE)
 public class ProductController {
 
+
+    private final Mapper mapper;
+
     private final ProductService productService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(Mapper mapper, ProductService productService) {
+        this.mapper = mapper;
         this.productService = productService;
     }
 
@@ -33,12 +37,7 @@ public class ProductController {
     public ResponseEntity list() {
         List<Product> products = productService.getProducts();
         List<ProductResource> collect = products.stream()
-                .map(product -> {
-                    ProductDto productDto = new ProductDto();
-                    productDto.setName(product.getName());
-                    productDto.setId(product.getId());
-                    return convertToProductResource(productDto);
-                })
+                .map(product -> convertToProductResource(mapper.map(product, ProductDto.class)))
                 .collect(toList());
         Link selfRel = linkTo(methodOn(ProductController.class).list()).withSelfRel();
         return ResponseEntity.ok().body(new Resources<>(collect, selfRel));
