@@ -29,4 +29,8 @@ public class ProductService {
                 .build();
         return productRepository.save(product);
     }
+
+    public Product addProduct(Product resource) {
+        return productRepository.save(resource);
+    }
 }

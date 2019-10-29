@@ -58,4 +58,20 @@ public class ProductServiceTest {
         productService.addProduct("낚시대", "쥐돌이", 3000);
         verify(productRepository).save(any());
     }
+
+    @Test
+    public void addProductByProduct() {
+        String name = "낚시대";
+        String maker = "창준컴패니";
+        int price = 3000;
+
+        Product product = Product.builder()
+                .name(name)
+                .maker(maker)
+                .price(price)
+                .build();
+
+        productService.addProduct(product);
+        verify(productRepository).save(any());
+    }
 }

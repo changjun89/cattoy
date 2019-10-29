@@ -5,6 +5,7 @@ import com.changjun.cattoy.domain.Product;
 import com.changjun.cattoy.dto.ProductDto;
 import com.changjun.cattoy.resources.ProductResource;
 import com.github.dozermapper.core.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.Resources;
@@ -19,19 +20,18 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(produces = MediaTypes.HAL_JSON_UTF8_VALUE)
+@RequestMapping(path = "/products", produces = MediaTypes.HAL_JSON_UTF8_VALUE)
 public class ProductController {
 
-    private final Mapper mapper;
-
     private final ProductService productService;
+    @Autowired
+    private Mapper mapper;
 
-    public ProductController(Mapper mapper, ProductService productService) {
-        this.mapper = mapper;
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
-    @GetMapping("/products")
+    @GetMapping
     public ResponseEntity list() {
         List<Product> products = productService.getProducts();
         List<ProductResource> collect = products.stream()
@@ -41,14 +41,13 @@ public class ProductController {
         return ResponseEntity.ok().body(new Resources<>(collect, selfRel));
     }
 
-    @PostMapping("/products")
+    @PostMapping
     public ResponseEntity create(@RequestBody ProductDto productDto) {
-        String name = productDto.getName();
-        String maker = productDto.getMaker();
-        int price = productDto.getPrice();
-        Product product = productService.addProduct(name, maker, price);
+        Product resource = mapper.map(productDto, Product.class);
+        Product product = productService.addProduct(resource);
+        productDto.setId(product.getId());
         URI uri = linkTo(methodOn(ProductController.class).create(productDto)).slash(product.getId()).toUri();
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity.created(uri).body(convertToProductResource(productDto));
     }
 
     private ProductResource convertToProductResource(ProductDto dto) {
