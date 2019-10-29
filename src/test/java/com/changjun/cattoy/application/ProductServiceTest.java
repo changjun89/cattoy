@@ -55,7 +55,7 @@ public class ProductServiceTest {
 
     @Test
     public void addProduct() {
-        productService.addProduct("쥐돌이");
+        productService.addProduct("낚시대", "쥐돌이", 3000);
         verify(productRepository).save(any());
     }
 }
