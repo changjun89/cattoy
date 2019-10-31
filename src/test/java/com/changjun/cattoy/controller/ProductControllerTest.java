@@ -2,6 +2,8 @@ package com.changjun.cattoy.controller;
 
 import com.changjun.cattoy.application.ProductService;
 import com.changjun.cattoy.domain.Product;
+import com.changjun.cattoy.dto.ProductDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 @RunWith(SpringRunner.class)
 @WebMvcTest(ProductController.class)
 public class ProductControllerTest {
@@ -33,6 +36,9 @@ public class ProductControllerTest {
 
     @MockBean
     private ProductService productService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     public void list() throws Exception {
@@ -128,5 +134,37 @@ public class ProductControllerTest {
                 .andExpect(content().string(containsString("낚시대")));
 
         verify(productService).getProduct(13L);
+    }
+
+    @Test
+    public void update() throws Exception {
+        ProductDto productDto = ProductDto.builder()
+                .name("낚시대")
+                .maker("달랩")
+                .price(5000)
+                .build();
+
+        Long id = 13L;
+        String name = "낚시대";
+        String maker = "창준컴패니";
+        int price = 3000;
+        Product product = Product.builder()
+                .id(id)
+                .name(name)
+                .maker(maker)
+                .price(price)
+                .build();
+
+        given(productService.updateProduct(id, productDto)).willReturn(product);
+
+        mockMvc.perform(
+                patch("/products/13")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(productDto))
+        )
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        verify(productService).updateProduct(13L, productDto);
     }
 }

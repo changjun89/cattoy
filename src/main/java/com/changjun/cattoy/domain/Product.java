@@ -1,10 +1,10 @@
 package com.changjun.cattoy.domain;
 
+import com.changjun.cattoy.dto.ProductDto;
 import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.text.NumberFormat;
 
@@ -37,6 +37,12 @@ public class Product {
         return imgUrl == null ? DEFAULTS_IMG_URL : imgUrl;
     }
 
+    public void changeWithDto(ProductDto productDto) {
+        name = productDto.getName();
+        maker = productDto.getMaker();
+        price = productDto.getPrice();
+    }
+
     @Override
     public String toString() {
         return "Product{" +
@@ -47,4 +53,5 @@ public class Product {
                 ", imgUrl='" + imgUrl + '\'' +
                 '}';
     }
+
 }

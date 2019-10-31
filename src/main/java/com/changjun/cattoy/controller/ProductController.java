@@ -63,6 +63,13 @@ public class ProductController {
         return ResponseEntity.ok().body(productDto);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity update(@PathVariable long id, @RequestBody ProductDto resource) {
+        Product product = productService.updateProduct(id, resource);
+        ProductDto productDto = mapper.map(product, ProductDto.class);
+        return ResponseEntity.ok().body(productDto);
+    }
+
     private ProductResource convertToProductResource(ProductDto dto) {
         ProductResource productResource = new ProductResource(dto);
         productResource.addUpdateEvents(this.getClass(), dto);

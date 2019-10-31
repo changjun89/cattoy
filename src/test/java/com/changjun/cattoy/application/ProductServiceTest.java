@@ -2,6 +2,7 @@ package com.changjun.cattoy.application;
 
 import com.changjun.cattoy.domain.Product;
 import com.changjun.cattoy.domain.ProductRepository;
+import com.changjun.cattoy.dto.ProductDto;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -98,6 +99,29 @@ public class ProductServiceTest {
         given(productRepository.findById(13L)).willReturn(Optional.of(product));
 
         productService.getProduct(13L);
+        verify(productRepository).findById(13L);
+    }
+
+    @Test
+    public void updateProduct() {
+        Product mockProduct = Product.builder()
+                .name("낚시대")
+                .maker("창준컴패니")
+                .price(3000)
+                .build();
+        given(productRepository.findById(13L)).willReturn(Optional.of(mockProduct));
+        ProductDto productDto = ProductDto.builder()
+                .maker("달랩")
+                .name("쥐돌이")
+                .price(5000)
+                .build();
+
+        Product product = productService.updateProduct(13L, productDto);
+
+        assertThat(product.getName()).isEqualTo(productDto.getName());
+        assertThat(product.getMaker()).isEqualTo(productDto.getMaker());
+        assertThat(product.getPrice()).isEqualTo(productDto.getPrice());
+
         verify(productRepository).findById(13L);
     }
 }
