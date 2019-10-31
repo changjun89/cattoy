@@ -77,7 +77,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void create() throws Exception {
+    public void createValidAttribute() throws Exception {
         Long id = 1L;
         String name = "낚시대";
         String maker = "창준컴패니";
@@ -100,6 +100,26 @@ public class ProductControllerTest {
                 .andExpect(header().exists(HttpHeaders.LOCATION));
 
         verify(productService).addProduct(any());
+    }
+
+    @Test
+    public void createInvalidPrice() throws Exception {
+        mockMvc.perform(post("/products")
+                .content("{\"name\":\"낚시대\",\"maker\":\"창준컴패니\",\"price\":\"-50\"}")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        )
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void createInvalidAttribute() throws Exception {
+        mockMvc.perform(post("/products")
+                .content("{\"name\":\"낚시대\",\"maker\":,\"price\":\"3000\"}")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        )
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @Test
