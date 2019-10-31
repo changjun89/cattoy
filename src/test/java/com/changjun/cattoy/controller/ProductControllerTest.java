@@ -104,4 +104,29 @@ public class ProductControllerTest {
 
         verify(productService).deleteProduct(1);
     }
+
+    @Test
+    public void detail() throws Exception {
+
+        Long id = 13L;
+        String name = "낚시대";
+        String maker = "창준컴패니";
+        int price = 3000;
+
+        Product product = Product.builder()
+                .id(id)
+                .name(name)
+                .maker(maker)
+                .price(price)
+                .build();
+
+        given(productService.getProduct(id)).willReturn(product);
+
+        mockMvc.perform(get("/products/13"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("낚시대")));
+
+        verify(productService).getProduct(13L);
+    }
 }

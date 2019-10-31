@@ -4,7 +4,6 @@ import com.changjun.cattoy.application.ProductService;
 import com.changjun.cattoy.domain.Product;
 import com.changjun.cattoy.dto.ProductDto;
 import com.changjun.cattoy.resources.ProductResource;
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
@@ -25,7 +24,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 public class ProductController {
 
     private final ProductService productService;
-      @Autowired
+    @Autowired
     private Mapper mapper;
 
     public ProductController(ProductService productService) {
@@ -55,6 +54,13 @@ public class ProductController {
     public ResponseEntity delete(@PathVariable long id) {
         productService.deleteProduct(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity detail(@PathVariable long id) {
+        Product product = productService.getProduct(id);
+        ProductDto productDto = mapper.map(product, ProductDto.class);
+        return ResponseEntity.ok().body(productDto);
     }
 
     private ProductResource convertToProductResource(ProductDto dto) {

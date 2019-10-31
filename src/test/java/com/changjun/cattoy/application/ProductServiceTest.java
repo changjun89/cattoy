@@ -9,6 +9,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -84,5 +85,22 @@ public class ProductServiceTest {
         long id = 1L;
         productService.deleteProduct(id);
         verify(productRepository).deleteById(id);
+    }
+
+    @Test
+    public void getProduct() {
+        String name = "낚시대";
+        String maker = "창준컴패니";
+        int price = 3000;
+
+        Product product = Product.builder()
+                .name(name)
+                .maker(maker)
+                .price(price)
+                .build();
+        given(productRepository.findById(13L)).willReturn(Optional.of(product));
+
+        productService.getProduct(13L);
+        verify(productRepository).findById(13L);
     }
 }
