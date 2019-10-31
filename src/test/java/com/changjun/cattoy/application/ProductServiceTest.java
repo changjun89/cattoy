@@ -72,10 +72,7 @@ public class ProductServiceTest {
                 .price(price)
                 .build();
 
-        Product newProduct = productService.addProduct(product);
-        assertThat(newProduct.getName()).isEqualTo(name);
-        assertThat(newProduct.getMaker()).isEqualTo(maker);
-        assertThat(newProduct.getPrice()).isEqualTo(price);
+        productService.addProduct(product);
 
         verify(productRepository).save(any());
     }
