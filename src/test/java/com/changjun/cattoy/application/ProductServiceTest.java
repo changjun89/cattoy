@@ -71,7 +71,18 @@ public class ProductServiceTest {
                 .price(price)
                 .build();
 
-        productService.addProduct(product);
+        Product newProduct = productService.addProduct(product);
+        assertThat(newProduct.getName()).isEqualTo(name);
+        assertThat(newProduct.getMaker()).isEqualTo(maker);
+        assertThat(newProduct.getPrice()).isEqualTo(price);
+
         verify(productRepository).save(any());
+    }
+
+    @Test
+    public void removeItem() {
+        long id = 1L;
+        productService.deleteProduct(id);
+        verify(productRepository).deleteById(id);
     }
 }

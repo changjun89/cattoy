@@ -1,9 +1,11 @@
 package com.changjun.cattoy.domain;
 
+import com.changjun.cattoy.dto.ProductDto;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class ProductTest {
 
@@ -11,6 +13,7 @@ public class ProductTest {
     private final String name = "쥐돌이";
     private final String maker = "메이커";
     private final int price = 3000;
+
 
     @Before
     public void setup() {
@@ -45,5 +48,20 @@ public class ProductTest {
 
         //then
         assertThat(product.getImgUrl()).isEqualTo(imgUrl);
+    }
+
+    @Test
+    public void dozerTest() {
+        // Mapper mapper = DozerBeanMapperBuilder.buildDefault();
+        ProductDto dto = new ProductDto();
+        dto.setMaker(maker);
+        dto.setName(name);
+        dto.setPrice(price);
+
+        Product product = mapper.map(dto, Product.class);
+        assertThat(product.getName()).isEqualTo(name);
+        assertThat(product.getPrice()).isEqualTo(price);
+        assertThat(product.getMaker()).isEqualTo(maker);
+
     }
 }

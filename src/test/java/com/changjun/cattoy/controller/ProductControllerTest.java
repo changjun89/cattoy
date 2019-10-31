@@ -20,8 +20,7 @@ import static org.hamcrest.core.StringContains.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -95,5 +94,14 @@ public class ProductControllerTest {
                 .andExpect(header().exists(HttpHeaders.LOCATION));
 
         verify(productService).addProduct(any());
+    }
+
+    @Test
+    public void destroy() throws Exception {
+        mockMvc.perform(delete("/products/1"))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        verify(productService).deleteProduct(1);
     }
 }
