@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -154,6 +155,18 @@ public class ProductControllerTest {
                 .andExpect(content().string(containsString("낚시대")));
 
         verify(productService).getProduct(13L);
+    }
+
+    @Test
+    public void detailWithNotExist() throws Exception {
+
+        given(productService.getProduct(404L)).willThrow(new EntityNotFoundException());
+
+        mockMvc.perform(get("/products/404"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+        verify(productService).getProduct(404L);
     }
 
     @Test
