@@ -1,5 +1,6 @@
 package com.changjun.cattoy.util;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -8,15 +9,13 @@ import java.security.Key;
 
 public class JwtUtil {
 
-    private String secret;
+    private Key key;
 
     public JwtUtil(String secret) {
-        this.secret = secret;
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     public String createToken(Long userId, String name) {
-        Key key = Keys.hmacShaKeyFor(secret.getBytes());
-
         String token = Jwts.builder()
                 .claim("userId", userId)
                 .claim("name", name)
@@ -24,5 +23,14 @@ public class JwtUtil {
                 .compact();
 
         return token;
+    }
+
+    public Claims parseToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(key)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims;
     }
 }
