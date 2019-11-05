@@ -32,4 +32,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'com.github.dozermapper:dozer-core:6.5.0'
     runtimeOnly('com.h2database:h2')
+    implementation 'io.jsonwebtoken:jjwt-api:0.10.7'
+    runtime 'io.jsonwebtoken:jjwt-impl:0.10.7'
+    runtime 'io.jsonwebtoken:jjwt-jackson:0.10.7'
 }
