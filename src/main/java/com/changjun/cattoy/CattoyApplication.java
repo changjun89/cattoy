@@ -17,5 +17,4 @@ public class CattoyApplication {
     public Mapper mapper() {
         return DozerBeanMapperBuilder.buildDefault();
     }
-
 }
