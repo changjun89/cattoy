@@ -28,9 +28,8 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity signUp(@RequestBody UserDto userDto) throws URISyntaxException {
         User user = mapper.map(userDto,User.class);
-        userService.register(user);
-
-        URI uri = new URI("/");
+        User newUser = userService.register(user);
+        URI uri = new URI("/users/"+newUser.getId());
         return ResponseEntity.created(uri).build();
     }
 }
