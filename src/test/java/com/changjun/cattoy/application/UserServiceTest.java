@@ -9,6 +9,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 
@@ -26,13 +27,15 @@ public class UserServiceTest {
     }
     @Test
     public void register() {
+        String password = "password";
         User user = User.builder()
                 .name("changjun")
                 .email("leechang0423@naver.com")
-                .password("password")
+                .password(password)
                 .build();
 
         userService.register(user);
+        assertThat(user).isNotEqualTo(password);
 
         verify(userRepository).save(user);
     }
