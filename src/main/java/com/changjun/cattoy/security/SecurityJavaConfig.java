@@ -11,6 +11,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.servlet.Filter;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityJavaConfig extends WebSecurityConfigurerAdapter {
@@ -20,7 +22,7 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        //Filter filter = new JwtAuthenticationFilter(authenticationManager(), jwtUtil());
+        Filter filter = new JwtAuthenticationFilter(authenticationManager(), jwtUtil());
 
         http
                 .cors().disable()
@@ -28,7 +30,7 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .headers().frameOptions().disable()
                 .and()
-                //.addFilter(filter)
+                .addFilter(filter)
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
