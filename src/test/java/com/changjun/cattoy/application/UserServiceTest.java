@@ -70,4 +70,19 @@ public class UserServiceTest {
 
         verify(userRepository).findByEmail(email);
     }
+
+    @Test
+    public void authenticateWithWrongPassword() {
+        String email = "leechang0423@naver.com";
+        String password = "password";
+        User mockUser = User.builder()
+                .email(email)
+                .password(password)
+                .build();
+
+        given(userRepository.findByEmail(email)).willReturn(Optional.of(mockUser));
+
+        User user = userService.authenticate(email, "x");
+        assertThat(user).isNull();
+    }
 }
