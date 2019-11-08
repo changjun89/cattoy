@@ -23,6 +23,9 @@ public class TokenController {
     @PostMapping("/token")
     public ResponseEntity signIn(@RequestBody SignDto signDto) throws URISyntaxException {
         User user = userService.authenticate(signDto.getEmail(), signDto.getPassword());
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.created(new URI("/token")).build();
     }
 }
