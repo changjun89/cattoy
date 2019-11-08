@@ -12,9 +12,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TokenController.class)
@@ -30,10 +32,12 @@ public class TokenControllerTest {
 
     @Test
     public void signInWithValidAttribute() throws Exception {
+        String name = "changjun";
         String email = "leechang0423@naver.com";
         String password = "password";
 
         User mockUser = User.builder()
+                .name(name)
                 .email(email)
                 .password(password)
                 .build();
@@ -42,7 +46,9 @@ public class TokenControllerTest {
         mockMvc.perform(post("/token")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content("{\"email\":\"leechang0423@naver.com\",\"password\":\"password\"}"))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(content().string(containsString("accessToken")))
+                .andExpect(content().string(containsString(".")));
 
         verify(userService).authenticate(email, password);
     }
@@ -68,6 +74,7 @@ public class TokenControllerTest {
                 .content("{}")
         )
                 .andExpect(status().isBadRequest());
+
     }
 
 }
