@@ -6,6 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 @Transactional
 public class UserService {
@@ -24,7 +26,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User authenticate(String name, String password) {
+    public User authenticate(String email, String password) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException());
         return null;
     }
 }
