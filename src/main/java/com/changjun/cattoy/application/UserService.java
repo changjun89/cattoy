@@ -23,4 +23,8 @@ public class UserService {
         user.hasPassword(passwordEncoder);
         return userRepository.save(user);
     }
+
+    public User authenticate(String name, String password) {
+        return null;
+    }
 }
