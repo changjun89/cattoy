@@ -60,4 +60,14 @@ public class TokenControllerTest {
 
         verify(userService).authenticate("x@naver.com", "password");
     }
+
+    @Test
+    public void signInNoPasswordAndEmail() throws Exception {
+        mockMvc.perform(post("/token")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("{}")
+        )
+                .andExpect(status().isBadRequest());
+    }
+
 }

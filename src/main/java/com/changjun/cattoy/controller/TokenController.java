@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -21,7 +22,7 @@ public class TokenController {
     }
 
     @PostMapping("/token")
-    public ResponseEntity signIn(@RequestBody SignDto signDto) throws URISyntaxException {
+    public ResponseEntity signIn(@RequestBody @Valid SignDto signDto) throws URISyntaxException {
         User user = userService.authenticate(signDto.getEmail(), signDto.getPassword());
         if (user == null) {
             return ResponseEntity.notFound().build();
