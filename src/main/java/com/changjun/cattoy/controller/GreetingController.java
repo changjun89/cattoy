@@ -2,7 +2,6 @@ package com.changjun.cattoy.controller;
 
 import com.changjun.cattoy.application.GreetingService;
 import com.changjun.cattoy.dto.GreetingDto;
-import io.jsonwebtoken.Claims;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,8 +22,7 @@ public class GreetingController {
 
         // 인증 객체가 있다면 이름을 바꿔줍니다.
         if (authentication != null) {
-            Claims claims = (Claims) authentication.getPrincipal();
-            myName = claims.get("name", String.class);
+            myName = authentication.getName();
         }
 
         GreetingDto greeting = new GreetingDto();
