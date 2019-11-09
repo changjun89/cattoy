@@ -12,11 +12,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TokenController.class)
@@ -31,26 +31,50 @@ public class TokenControllerTest {
     private UserService userService;
 
     @Test
-    public void signInWithValidAttributes() throws Exception {
-        User mockUser = User.builder()
-                .email("leechang0423@naver.com")
-                .password("password")
-                .build();
-        given(userService.authenticate("leechang0423@naver.com","psssword")).willReturn(mockUser);
-        mockMvc.perform(post("/token")
-        .contentType(MediaType.APPLICATION_JSON_UTF8)
-        .content("{\"email\":\"leechang0423@naver.com\",\"password\":\"password\"}"))
-                .andExpect(status().isCreated());
-        verify(userService).authenticate(any(), any() );
-    }
+    public void signInWithValidAttribute() throws Exception {
+        String name = "changjun";
+        String email = "leechang0423@naver.com";
+        String password = "password";
 
-    @Test
-    public void signInWithInValidAttributes() throws Exception {
-        given(userService.authenticate("leechang0423@naver.com","psssword")).willReturn(null);
+        User mockUser = User.builder()
+                .name(name)
+                .email(email)
+                .password(password)
+                .build();
+        given(userService.authenticate(email, password)).willReturn(mockUser);
+
         mockMvc.perform(post("/token")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content("{\"email\":\"leechang0423@naver.com\",\"password\":\"password\"}"))
-                .andExpect(status().isNotFound());
-        verify(userService).authenticate(any(), any() );
+                .andExpect(status().isCreated())
+                .andExpect(content().string(containsString("accessToken")))
+                .andExpect(content().string(containsString(".")));
+
+        verify(userService).authenticate(email, password);
     }
+
+    @Test
+    public void signInWithInValidAttribute() throws Exception {
+        String email = "x@naver.com";
+        String password = "password";
+        given(userService.authenticate(email, password)).willReturn(null);
+
+        mockMvc.perform(post("/token")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("{\"email\":\"x@naver.com\",\"password\":\"password\"}"))
+                .andExpect(status().isNotFound());
+
+        verify(userService).authenticate("x@naver.com", "password");
+    }
+
+    @Test
+    public void signInNoPasswordAndEmail() throws Exception {
+        mockMvc.perform(post("/token")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("{}")
+        )
+                .andExpect(status().isBadRequest());
+
+    }
+
 }

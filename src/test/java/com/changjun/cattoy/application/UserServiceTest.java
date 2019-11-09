@@ -29,6 +29,7 @@ public class UserServiceTest {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         userService = new UserService(passwordEncoder, userRepository);
     }
+
     @Test
     public void register() {
         String password = "password";
@@ -45,21 +46,43 @@ public class UserServiceTest {
     }
 
     @Test
-    public void authenticateWithValidAttribute() {
-        User mockUser = User.builder()
-                .email("leechang0423@naver.com")
-                .password("password")
+    public void authenticateWithValidAttributes() {
+        String email = "leechang0423@naver.com";
+        String password = "password";
+        User user = User.builder()
+                .email(email)
+                .password(password)
                 .build();
 
-        given(userRepository.findByEmail("leechang0423@naver.com")).willReturn(Optional.of(mockUser));
-        User user = userService.authenticate("leechang0423@naver.com", "password");
-        assertThat(user).isNotNull();
+        given(userRepository.findByEmail(email)).willReturn(Optional.of(user));
+        userService.authenticate(email, password);
+
+        verify(userRepository).findByEmail(email);
     }
 
     @Test(expected = EntityNotFoundException.class)
-    public void authenticateWithInValidAttribute() {
-        given(userRepository.findByEmail("x@naver.com")).willThrow(new EntityNotFoundException());
+    public void authenticateWithInValidAttributes() {
+        String email = "leechang0423@naver.com";
+        String password = "password";
 
-        userService.authenticate("x@naver.com","pass");
+        given(userRepository.findByEmail(email)).willThrow(new EntityNotFoundException());
+        userService.authenticate(email, password);
+
+        verify(userRepository).findByEmail(email);
+    }
+
+    @Test
+    public void authenticateWithWrongPassword() {
+        String email = "leechang0423@naver.com";
+        String password = "password";
+        User mockUser = User.builder()
+                .email(email)
+                .password(password)
+                .build();
+
+        given(userRepository.findByEmail(email)).willReturn(Optional.of(mockUser));
+
+        User user = userService.authenticate(email, "x");
+        assertThat(user).isNull();
     }
 }
