@@ -10,6 +10,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -42,6 +43,8 @@ public class ProductController {
         return ResponseEntity.ok().body(new Resources<>(collect, selfRel));
     }
 
+    // 인증된 사용자만 접근 가능
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity create(@RequestBody @Valid ProductDto productDto) {
         Product resource = mapper.map(productDto, Product.class);

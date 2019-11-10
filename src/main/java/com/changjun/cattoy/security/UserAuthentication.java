@@ -30,4 +30,9 @@ public class UserAuthentication extends AbstractAuthenticationToken {
         // 인증된 사용자의 이름을 얻습니다.
         return claims.get("name", String.class);
     }
+
+    @Override
+    public boolean isAuthenticated() {
+        return true;
+    }
 }

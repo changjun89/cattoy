@@ -32,6 +32,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ProductController.class)
 public class ProductControllerTest {
 
+    private static final String TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
+            "eyJ1c2VySWQiOjEzLCJuYW1lIjoi7YWM7Iqk7YSwIn0." +
+            "yI3hxmFPMg4tbbxsUh11AzwfgbfxW_jrUaqFuzPTS64";
+
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -93,6 +98,7 @@ public class ProductControllerTest {
 
         given(productService.addProduct(any())).willReturn(product);
         mockMvc.perform(post("/products")
+                .header("Authorization", "Bearer " + TOKEN)
                 .content("{\"name\":\"낚시대\",\"maker\":\"창준컴패니\",\"price\":\"3000\"}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
         )
@@ -106,6 +112,7 @@ public class ProductControllerTest {
     @Test
     public void createInvalidPrice() throws Exception {
         mockMvc.perform(post("/products")
+                .header("Authorization", "Bearer " + TOKEN)
                 .content("{\"name\":\"낚시대\",\"maker\":\"창준컴패니\",\"price\":\"-50\"}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
         )
@@ -116,6 +123,7 @@ public class ProductControllerTest {
     @Test
     public void createInvalidAttribute() throws Exception {
         mockMvc.perform(post("/products")
+                .header("Authorization", "Bearer " + TOKEN)
                 .content("{\"name\":\"낚시대\",\"maker\":,\"price\":\"3000\"}")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
         )
@@ -199,5 +207,16 @@ public class ProductControllerTest {
                 .andExpect(status().isOk());
 
         verify(productService).updateProduct(13L, productDto);
+    }
+
+    @Test
+    public void createWithoutAuthentication() throws Exception {
+        mockMvc.perform(
+                post("/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"낚시대\",\"maker\":\"달랩\"," +
+                                "\"price\":5000}")
+        )
+                .andExpect(status().isUnauthorized());
     }
 }
