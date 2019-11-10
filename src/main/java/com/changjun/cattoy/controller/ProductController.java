@@ -44,7 +44,8 @@ public class ProductController {
     }
 
     // 인증된 사용자만 접근 가능
-    @PreAuthorize("isAuthenticated()")
+    // 인증된 사용자 & 관리자만 접근 가능
+    @PreAuthorize("isAuthenticated() and hasAuthority('ADMIN')")
     @PostMapping
     public ResponseEntity create(@RequestBody @Valid ProductDto productDto) {
         Product resource = mapper.map(productDto, Product.class);
