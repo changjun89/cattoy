@@ -14,11 +14,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
+public class JwtAuthenticationFilter
+        extends BasicAuthenticationFilter {
 
     private JwtUtil jwtUtil;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(
+            AuthenticationManager authenticationManager,
+            JwtUtil jwtUtil
+    ) {
         super(authenticationManager);
         this.jwtUtil = jwtUtil;
     }
@@ -57,8 +61,6 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         Claims claims = jwtUtil.parseToken(token);
 
         // 인증 객체를 만듭니다.
-        // 여기선 일단 기존 구현체를 활용합니다.
-        //Authentication authentication = new UsernamePasswordAuthenticationToken(claims, null);
         Authentication authentication = new UserAuthentication(claims);
 
         return authentication;

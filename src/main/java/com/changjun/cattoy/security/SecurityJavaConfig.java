@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -17,6 +18,7 @@ import javax.servlet.Filter;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityJavaConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${jwt.secret}")
@@ -24,7 +26,12 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        Filter filter = new JwtAuthenticationFilter(authenticationManager(), jwtUtil());
+        // 사용자 인증을 위한 필터.
+        Filter jwtAuthenticationFilter = new JwtAuthenticationFilter(
+                authenticationManager(), jwtUtil());
+
+        // JWT 서명 오류 처리를 위한 필터.
+        Filter signatureExceptionFilter = new SignatureExceptionFilter();
 
         http
                 .cors().disable()
@@ -32,7 +39,9 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().disable()
                 .headers().frameOptions().disable()
                 .and()
-                .addFilter(filter)
+                .addFilter(jwtAuthenticationFilter)
+                .addFilterBefore(signatureExceptionFilter,
+                        JwtAuthenticationFilter.class)
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -51,6 +60,4 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter {
     public JwtUtil jwtUtil() {
         return new JwtUtil(secret);
     }
-
 }
-
