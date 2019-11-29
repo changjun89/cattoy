@@ -4,13 +4,13 @@ import com.changjun.cattoy.application.ProductService;
 import com.changjun.cattoy.domain.Product;
 import com.changjun.cattoy.dto.ProductDto;
 import com.changjun.cattoy.resources.ProductResource;
+import com.changjun.cattoy.security.AuthorizeRequired;
 import com.github.dozermapper.core.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -45,8 +45,9 @@ public class ProductController {
 
     // 인증된 사용자만 접근 가능
     // 인증된 사용자 & 관리자만 접근 가능
-    @PreAuthorize("isAuthenticated() and hasAuthority('ADMIN')")
+    @AuthorizeRequired("ADMIN")
     @PostMapping
+    // 인증된 사용자 & 관리자만 접근 가능
     public ResponseEntity create(@RequestBody @Valid ProductDto productDto) {
         Product resource = mapper.map(productDto, Product.class);
         Product product = productService.addProduct(resource);
