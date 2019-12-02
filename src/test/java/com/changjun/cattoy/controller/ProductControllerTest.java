@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(ProductController.class)
+@ActiveProfiles("test")
 public class ProductControllerTest {
 
     private static final String ADMIN_TOKEN = "eyJhbGciOiJIUzI1NiJ9." +
@@ -225,9 +227,14 @@ public class ProductControllerTest {
 
     @Test
     public void createWithoutAdminRole() throws Exception {
+
+        Product product = Product.builder().name("쥐돌이").build();
+
+        given(productService.addProduct(any())).willReturn(product);
+
         mockMvc.perform(
                 post("/products")
-                        .header("Authorization", "Bearer " + TESTER_TOKEN)
+                        .header("Authorization", "Bearer " + ADMIN_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"낚시대\",\"maker\":\"달랩\"," +
                                 "\"price\":5000}")
